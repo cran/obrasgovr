@@ -1,0 +1,132 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file. -->
+
+<img class="readme-logo" src="man/figures/logo.svg" align="right" height="180" alt="obrasgovr hex logo" />
+
+# obrasgovr
+
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/StrategicProjects/obrasgovr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/StrategicProjects/obrasgovr/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/StrategicProjects/obrasgovr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/StrategicProjects/obrasgovr)
+[![pkgdown](https://github.com/StrategicProjects/obrasgovr/actions/workflows/pkgdown.yaml/badge.svg)](https://strategicprojects.github.io/obrasgovr/)
+[![Project Status:
+Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+<!-- badges: end -->
+
+**obrasgovr** provides a modern R interface to the [ObrasGov Open Data
+API](https://api-publica.obrasgov.gestao.gov.br/obras/docs), maintained
+by the Brazilian federal government. It retrieves data about
+infrastructure projects, physical execution, budget commitments,
+contracts, geometries, feasibility studies, and the status histories of
+suspended or cancelled projects.
+
+> Turn Brazil’s public infrastructure data into analysis-ready R tables
+> with a consistent, typed and pagination-aware interface.
+
+## Why use obrasgovr?
+
+The official API is extensive and paginated. Using it directly requires
+building URLs, handling HTTP errors, joining pages, and transforming
+nested JSON. **obrasgovr** handles those tasks and returns
+analysis-ready tibbles without discarding one-to-many relationships. It
+is designed for researchers, oversight bodies, public managers, data
+journalists, and civil society organizations.
+
+Key features include:
+
+- a consistent English `snake_case` interface, with Portuguese
+  compatibility aliases;
+- HTTP/2 over TLS negotiation, retries, and throttling that averages 60
+  requests per minute, allowing short bursts;
+- explicit pagination and retrieval metadata;
+- dates converted to `Date` and the update timestamp converted to
+  `POSIXct`;
+- nested objects preserved as list-columns;
+- offline unit tests and optional integration tests against the official
+  API.
+
+The API’s filter names, response fields, and categorical values remain
+in Portuguese because they are part of the upstream ObrasGov contract.
+
+## Installation
+
+The package is under development and is not yet on CRAN. Install the
+GitHub version with:
+
+``` r
+install.packages("pak")
+pak::pak("StrategicProjects/obrasgovr")
+```
+
+## Usage
+
+``` r
+library(obrasgovr)
+
+projects_pe <- get_projects(
+  uf_principal = "PE",
+  situacao = "Em execução",
+  page_size = 100
+)
+
+projects_pe
+result_metadata(projects_pe)
+```
+
+Inspect resource and filter names without accessing the internet:
+
+``` r
+list_resources()
+list_filters("projects")
+```
+
+Retrieving multiple pages must be requested explicitly:
+
+``` r
+contracts <- get_contracts(
+  id_projeto_investimento = "134851.26-07",
+  all_pages = TRUE,
+  page_limit = 20
+)
+```
+
+Portuguese aliases remain available for compatibility. They retain the
+original Portuguese pagination argument names:
+
+``` r
+projetos_pe <- obter_projetos(
+  uf_principal = "PE",
+  tamanho_da_pagina = 100
+)
+```
+
+See `vignette("obrasgovr")` for a complete introduction,
+`vignette("end-to-end-workflow")` for a reproducible multi-resource
+analysis, and `vignette("pagination-and-nested-data")` for pagination
+and list-columns.
+
+## Current API
+
+This package exclusively uses the current environment at
+`https://api-publica.obrasgov.gestao.gov.br/obras`. The **previous
+ObrasGov API** is not supported here: ObrasGov has set **31 August
+2026** as the deadline for migrating away from that previous API to this
+environment. Until that date, the previous API keeps running and being
+updated. See the [official
+announcement](https://www.gov.br/obrasgov/pt-br/ferramentas-de-gestao-e-transparencia/api-de-dados-abertos-obrasgov-br_novo).
+
+## Contributing and conduct
+
+Contributions are welcome. Read the [contributing
+guide](https://github.com/StrategicProjects/obrasgovr/blob/main/CONTRIBUTING.md)
+and the [Code of
+Conduct](https://github.com/StrategicProjects/obrasgovr/blob/main/CODE_OF_CONDUCT.md)
+before opening an issue or pull request.
+
+## License
+
+MIT © obrasgovr authors.
