@@ -8,11 +8,12 @@ bibentry(
   bibtype = "Manual",
   title = "obrasgovr: Access the ObrasGov Open Data API",
   author = c(
-    person("Andre", "Leite"),
+    person("André", "Leite"),
     person("Marcos", "Wasiliew"),
     person("Hugo", "Vasconcelos"),
     person("Carlos", "Amorim"),
-    person("Diogo", "Bezerra")
+    person("Diogo", "Bezerra"),
+    person("Júlia", "Nascimento Barreto")
   ),
   year = year,
   note = paste("R package version", meta$Version),
